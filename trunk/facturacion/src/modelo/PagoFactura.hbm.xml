@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 11, 2015 2:13:19 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="modelo.PagoFactura" table="pago_factura" schema="public">
+        <id name="pagoDocumentoId" type="int">
+            <column name="pago_documento_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="venta" class="modelo.Venta" fetch="select">
+            <column name="factura_venta_id" />
+        </many-to-one>
+        <many-to-one name="compra" class="modelo.Compra" fetch="select">
+            <column name="factura_compra_id" />
+        </many-to-one>
+        <many-to-one name="cuentas" class="modelo.Cuentas" fetch="select">
+            <column name="cuenta_id" not-null="true" />
+        </many-to-one>
+        <property name="estado" type="string">
+            <column name="estado" length="10" not-null="true" />
+        </property>
+        <property name="monto" type="double">
+            <column name="monto" precision="17" scale="17" not-null="true" />
+        </property>
+        <set name="tipoPagos" table="tipo_pago" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="pago_documento_id" not-null="true" />
+            </key>
+            <one-to-many class="modelo.TipoPago" />
+        </set>
+    </class>
+</hibernate-mapping>

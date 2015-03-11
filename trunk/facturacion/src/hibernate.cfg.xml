@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+    <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+    <property name="hibernate.connection.url">jdbc:postgresql://localhost:5433/proyecto</property>
+    <property name="hibernate.connection.username">postgres</property>
+    <property name="hibernate.connection.password">1234</property>
+    <property name="hibernate.transaction.auto_close_session">true</property>
+    <mapping resource="modelo/Venta.hbm.xml"/>
+    <mapping resource="modelo/DetalleRemision.hbm.xml"/>
+    <mapping resource="modelo/NotaRemision.hbm.xml"/>
+    <mapping resource="modelo/PagoFactura.hbm.xml"/>
+    <mapping resource="modelo/Compra.hbm.xml"/>
+    <mapping resource="modelo/Proveedor.hbm.xml"/>
+    <mapping resource="modelo/Componente.hbm.xml"/>
+    <mapping resource="modelo/Cuentas.hbm.xml"/>
+    <mapping resource="modelo/Stock.hbm.xml"/>
+    <mapping resource="modelo/DetalleCompra.hbm.xml"/>
+    <mapping resource="modelo/TipoPago.hbm.xml"/>
+    <mapping resource="modelo/DetalleVenta.hbm.xml"/>
+    <mapping resource="modelo/Cliente.hbm.xml"/>
+  </session-factory>
+</hibernate-configuration>

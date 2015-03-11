@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 11, 2015 2:13:19 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="modelo.Stock" table="stock" schema="public">
+        <id name="stockId" type="int">
+            <column name="stock_id" />
+            <generator class="assigned" />
+        </id>
+        <many-to-one name="componente" class="modelo.Componente" fetch="select">
+            <column name="componente_id" not-null="true" />
+        </many-to-one>
+        <property name="idAdministrador" type="java.lang.Integer">
+            <column name="id_administrador" />
+        </property>
+        <property name="existencia" type="int">
+            <column name="existencia" not-null="true" />
+        </property>
+    </class>
+</hibernate-mapping>

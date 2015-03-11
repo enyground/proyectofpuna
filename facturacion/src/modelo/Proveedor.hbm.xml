@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Mar 11, 2015 2:13:19 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+    <class name="modelo.Proveedor" table="proveedor" schema="public">
+        <id name="porveedorId" type="int">
+            <column name="porveedor_id" />
+            <generator class="identity" />
+        </id>
+        <property name="nombre" type="string">
+            <column name="nombre" length="15" not-null="true" />
+        </property>
+        <property name="apellido" type="string">
+            <column name="apellido" length="15" />
+        </property>
+        <property name="direccion" type="string">
+            <column name="direccion" length="20" />
+        </property>
+        <property name="telefono" type="string">
+            <column name="telefono" length="15" />
+        </property>
+        <property name="rucCi" type="string">
+            <column name="ruc_ci" length="15" not-null="true" />
+        </property>
+        <property name="estado" type="string">
+            <column name="estado" length="10" not-null="true" />
+        </property>
+        <property name="codProveedor" type="string">
+            <column name="cod_proveedor" length="10" not-null="true" />
+        </property>
+        <set name="notaRemisions" table="nota_remision" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="proveedor_id" not-null="true" />
+            </key>
+            <one-to-many class="modelo.NotaRemision" />
+        </set>
+        <set name="cuentases" table="cuentas" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="proveedor_id" />
+            </key>
+            <one-to-many class="modelo.Cuentas" />
+        </set>
+        <set name="compras" table="compra" inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="proveedor_id" not-null="true" />
+            </key>
+            <one-to-many class="modelo.Compra" />
+        </set>
+    </class>
+</hibernate-mapping>

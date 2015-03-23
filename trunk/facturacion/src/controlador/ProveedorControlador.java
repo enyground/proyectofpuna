@@ -8,7 +8,7 @@ package controlador;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import modelo.Proveedor;
+import model.Proveedor;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -35,7 +35,7 @@ public class ProveedorControlador {
     
    
      
-    public void update(Proveedor prov) throws Exception{
+    /*public void update(Proveedor prov) throws Exception{
         Session baseDatos = HibernateUtil.getSessionFactory().openSession();
         baseDatos.beginTransaction();
         
@@ -46,6 +46,21 @@ public class ProveedorControlador {
         
          
           baseDatos.beginTransaction().commit();
+        } catch(HibernateException e){
+            throw new Exception("Error al modificar proveedor: \n" + e.getMessage());
+        }
+    }*/
+    
+    public void update(Proveedor prov) throws Exception {
+        Session baseDatos = HibernateUtil.getSessionFactory().openSession();
+        baseDatos.beginTransaction();
+        
+        try {
+            baseDatos.createQuery("update Proveedor set "
+                   +" nombre = '" + prov.getNombre() + "', apellido = '" + prov.getApellido() + "'"
+                    + ", ci = '" +  prov.getCi() + "', dv = '" +  prov.getDv()+  "', direccion = '" +  prov.getDireccion()+ "', telefono = '" + prov.getTelefono() +  "'"                   
+            + ", estado = '" + prov.getEstado() + "' where cod_proveedor = '" + prov.getCodProveedor() + "'").executeUpdate();
+            baseDatos.beginTransaction().commit();
         } catch(HibernateException e){
             throw new Exception("Error al modificar proveedor: \n" + e.getMessage());
         }
@@ -66,7 +81,9 @@ public class ProveedorControlador {
     
     public ResultSet datos() throws Exception {
         Session baseDatos = HibernateUtil.getSessionFactory().openSession();
-        String query = "SELECT cod_proveedor as \"Código\", ruc_ci as \"RUC/CI\", nombre as \"Nombre\", apellido as \"Apellido\", direccion as \"Direccion\", telefono as \"Telefono\", estado as \"Estado\" from proveedor";
+        
+        
+        String query = "SELECT cod_proveedor as \"Código\",  case when dv='' then ci else ci||'-'||dv end as \"RUC/CI\", nombre as \"Nombre\", apellido as \"Apellido\", direccion as \"Direccion\", telefono as \"Telefono\", estado as \"Estado\" from Proveedor";
         PreparedStatement ps = baseDatos.connection().prepareStatement(query);
         ResultSet rs = ps.executeQuery();
         try {

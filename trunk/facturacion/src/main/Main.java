@@ -6,7 +6,9 @@
 
 package main;
 
+import vista.Estados;
 import vista.ProveedorForm;
+import vista.ruc;
 
 /**
  *
@@ -21,6 +23,12 @@ public class Main {
        c.pack();
        c.setVisible(true);
        c.setLocationRelativeTo(null);
+      
+     
+       /*int ci;
+       ruc RUC = new ruc();
+       ci=RUC.Pa_Calcular_Dv_11_A("80055516", 11);
+       System.out.println(ci);*/
     }
     
 }

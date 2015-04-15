@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.Venta" schema="public" table="venta">
+    <id name="ventaId" type="int">
+      <column name="venta_id"/>
+      <generator class="assigned"/>
+    </id>
+    <many-to-one class="model.Cliente" fetch="select" name="cliente">
+      <column name="cliente_id" not-null="true"/>
+    </many-to-one>
+    <property name="nroPrefijo" type="int">
+      <column name="nro_prefijo" not-null="true"/>
+    </property>
+    <property name="nroFactura" type="int">
+      <column name="nro_factura" not-null="true"/>
+    </property>
+    <property name="fecha" type="timestamp">
+      <column length="29" name="fecha" not-null="true"/>
+    </property>
+    <property name="precioTotal" type="double">
+      <column name="precio_total" not-null="true" precision="17" scale="17"/>
+    </property>
+    <property name="cantidadTotal" type="int">
+      <column name="cantidad_total" not-null="true"/>
+    </property>
+    <property name="descuento" type="java.lang.Double">
+      <column name="descuento" precision="17" scale="17"/>
+    </property>
+    <property name="iva" type="java.lang.Double">
+      <column name="iva" precision="17" scale="17"/>
+    </property>
+    <property name="precioExenta" type="java.lang.Double">
+      <column name="precio_exenta" precision="17" scale="17"/>
+    </property>
+    <property name="pagoContado" type="string">
+      <column length="2" name="pago_contado" not-null="true"/>
+    </property>
+    <property name="estado" type="string">
+      <column length="10" name="estado" not-null="true"/>
+    </property>
+    <property name="rucCi" type="string">
+      <column length="15" name="ruc_ci" not-null="true"/>
+    </property>
+    <property name="factReferenciada" type="java.lang.Integer">
+      <column name="fact_referenciada"/>
+    </property>
+    <property name="esFactura" type="char">
+      <column length="1" name="es_factura" not-null="true">
+        <comment>es_factura donde S= factura y N = nota de credito</comment>
+      </column>
+    </property>
+    <property name="vencimiento" type="date">
+      <column length="13" name="vencimiento" not-null="true"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="true" name="detalleVentas" table="detalle_venta">
+      <key>
+        <column name="venta_id" not-null="true"/>
+      </key>
+      <one-to-many class="model.DetalleVenta"/>
+    </set>
+    <set fetch="select" inverse="true" lazy="true" name="pagoFacturas" table="pago_factura">
+      <key>
+        <column name="factura_venta_id"/>
+      </key>
+      <one-to-many class="model.PagoFactura"/>
+    </set>
+  </class>
+</hibernate-mapping>

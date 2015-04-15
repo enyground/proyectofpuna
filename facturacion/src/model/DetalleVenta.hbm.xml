@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.DetalleVenta" schema="public" table="detalle_venta">
+    <id name="detalleFacturaId" type="int">
+      <column name="detalle_factura_id"/>
+      <generator class="assigned"/>
+    </id>
+    <many-to-one class="model.Componente" fetch="select" name="componente">
+      <column name="componente_id" not-null="true"/>
+    </many-to-one>
+    <many-to-one class="model.Venta" fetch="select" name="venta">
+      <column name="venta_id" not-null="true"/>
+    </many-to-one>
+    <property name="cantidad" type="int">
+      <column name="cantidad" not-null="true"/>
+    </property>
+    <property name="subTotal" type="double">
+      <column name="sub_total" not-null="true" precision="17" scale="17"/>
+    </property>
+    <property name="descripcion" type="string">
+      <column length="20" name="descripcion"/>
+    </property>
+  </class>
+</hibernate-mapping>

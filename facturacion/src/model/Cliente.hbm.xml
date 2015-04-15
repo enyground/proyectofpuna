@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.Cliente" schema="public" table="cliente">
+    <id name="clienteId" type="int">
+      <column name="cliente_id"/>
+      <generator class="assigned"/>
+    </id>
+    <property name="nombre" type="string">
+      <column length="15" name="nombre" not-null="true"/>
+    </property>
+    <property name="apellido" type="string">
+      <column length="15" name="apellido"/>
+    </property>
+    <property name="direccion" type="string">
+      <column length="20" name="direccion"/>
+    </property>
+    <property name="telefono" type="string">
+      <column length="15" name="telefono"/>
+    </property>
+    <property name="rucCi" type="string">
+      <column length="15" name="ruc_ci" not-null="true"/>
+    </property>
+    <property name="estado" type="string">
+      <column length="10" name="estado" not-null="true"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="true" name="cuentases" table="cuentas">
+      <key>
+        <column name="cliente_id"/>
+      </key>
+      <one-to-many class="model.Cuentas"/>
+    </set>
+    <set fetch="select" inverse="true" lazy="true" name="ventas" table="venta">
+      <key>
+        <column name="cliente_id" not-null="true"/>
+      </key>
+      <one-to-many class="model.Venta"/>
+    </set>
+  </class>
+</hibernate-mapping>

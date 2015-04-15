@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.Usuario" schema="public" table="usuario">
+    <id name="idUsuario" type="int">
+      <column name="id_usuario"/>
+      <generator class="assigned"/>
+    </id>
+    <property name="nombre" type="string">
+      <column length="15" name="nombre"/>
+    </property>
+    <property name="contrasenha" type="string">
+      <column length="32" name="contrasenha"/>
+    </property>
+    <set fetch="select" inverse="false" lazy="true" name="rols" table="rol_usuario">
+      <key>
+        <column name="id_usuario" not-null="true"/>
+      </key>
+      <many-to-many entity-name="model.Rol">
+        <column name="id_rol" not-null="true"/>
+      </many-to-many>
+    </set>
+  </class>
+</hibernate-mapping>

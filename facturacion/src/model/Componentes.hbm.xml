@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.Componentes" schema="public" table="componentes">
+    <id name="codigo" type="string">
+      <column name="codigo"/>
+      <generator class="assigned"/>
+    </id>
+    <property name="descripcion" type="string">
+      <column name="descripcion"/>
+    </property>
+    <property name="unidad" type="string">
+      <column name="unidad"/>
+    </property>
+  </class>
+</hibernate-mapping>

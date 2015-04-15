@@ -7,8 +7,10 @@
 package vista;
 
 import controlador.ProveedorControlador;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.HeadlessException;
+import java.awt.event.KeyEvent;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import javax.swing.ButtonGroup;
@@ -29,16 +31,16 @@ import model.Proveedor;
 public class ProveedorForm extends javax.swing.JDialog {
 
     /**
-     * Creates new form Proveedor
+     * Creates new form 
      * @param parent
      */
-    public ProveedorForm(java.awt.Frame parent, boolean modal) {
+    public ProveedorForm(java.awt.Dialog parent, boolean modal) {
         super(parent, modal);
         initComponents();
         
     }
 
-        public ProveedorForm() {
+    public ProveedorForm() {
         
         initComponents();
         establecerBotones("Vacio");
@@ -54,8 +56,8 @@ public class ProveedorForm extends javax.swing.JDialog {
     Proveedor pro = new Proveedor();
     
     ProveedorControlador proBD = new ProveedorControlador();
-    private final Component msg_error=null;
-    Mensaje err = new Mensaje(msg_error); 
+    DefaultTableModel modelo = new DefaultTableModel();
+    int k;
 
     
   
@@ -71,7 +73,7 @@ public class ProveedorForm extends javax.swing.JDialog {
         try {
             txtCodigo.requestFocusInWindow();     
         } catch (Exception ex) {
-            showMessageDialog(null, ex, "Error", ERROR_MESSAGE);
+            showMessageDialog(null, ex.toString(), "Error", ERROR_MESSAGE);
         }
        
         }
@@ -90,7 +92,7 @@ public class ProveedorForm extends javax.swing.JDialog {
         }
         
        private void guardar(){
-
+       if (showConfirmDialog(null, "Está seguro de guardar los datos?", "Confirmar", YES_NO_OPTION) == YES_OPTION) {
             pro.setCodProveedor(txtCodigo.getText());
             pro.setNombre(txtNombre.getText());
             pro.setApellido(txtApellido.getText()); 
@@ -99,6 +101,38 @@ public class ProveedorForm extends javax.swing.JDialog {
             pro.setDv(txtdv.getText());
             pro.setTelefono(txtTelefono.getText());
             pro.setEstado(CBestado.getSelectedItem().toString());
+            
+             if (txtci.getText().trim().isEmpty() == true) {
+                showMessageDialog(this, "Campo cédula/ruc vacío, por favor ingrese su cédula o RUC ", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (JRruc.isSelected() == true && txtdv.getText().trim().isEmpty()) {
+                showMessageDialog(this, "Campo RUC incompleto, por favor ingrese correctamente su RUC", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (txtNombre.getText().trim().isEmpty() == true) {
+                showMessageDialog(this, "Campo nombre vacío, por favor ingrese correctamente su nombre", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (JRparticular.isSelected() == true && txtApellido.getText().trim().isEmpty() == true) {
+                showMessageDialog(this, "Campo apellido vacío, por favor ingrese correctamente su apellido", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (txtDireccion.getText().trim().isEmpty() == true) {
+                showMessageDialog(this, "Campo dirección vacío, por favor ingrese correctamente su dirección", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            if (txtTelefono.getText().trim().isEmpty() == true) {
+                showMessageDialog(this, "Campo teléfono, por favor ingrese correctamente su teléfono", "Atención", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+          
            
            
          if (bNuevo.isEnabled() == false) { //is Enable true - habilita boton 
@@ -107,11 +141,14 @@ public class ProveedorForm extends javax.swing.JDialog {
                     nuevo();
                     getProveedores();
                 } catch (Exception ex) {
-                    showMessageDialog(null, ex, "Error", ERROR_MESSAGE);
+                    //showMessageDialog(null, "Debe ingresar la descripción.", "Atención", INFORMATION_MESSAGE); 
+                    
+                   showMessageDialog(null,ex.getMessage(), "Error", ERROR_MESSAGE);
                 }
             } else {
                  try {
                     proBD.update(pro);
+                    showMessageDialog(null, "Actualizado correctamente");
                     limpiar();              
                     getProveedores();
                 } catch (Exception ex) {
@@ -121,7 +158,8 @@ public class ProveedorForm extends javax.swing.JDialog {
                 
             }
          
-    }
+         }
+       }
      private void cancelar(){
         if(showConfirmDialog (null, "Está seguro de cancelar la operación?", "Confirmar", YES_NO_OPTION) == YES_OPTION){
             limpiar();
@@ -130,14 +168,31 @@ public class ProveedorForm extends javax.swing.JDialog {
             txtdv.setEditable(false);
             getProveedores();
             establecerBotones("Edicion");
+            if (modelo.getRowCount() == 0) {
+                limpiar(); 
+                establecerBotones("Vacio"); 
+                modoBusqueda(false); 
+                return;
+            }
+            if (k >= 0){
+                    limpiar(); 
+                    datosActuales(); 
+                    establecerBotones("Edicion");
+                    modoBusqueda(false);
+                    return;
+            }
         }
     }
     private void borrar(){
-        if(showConfirmDialog (null, "Está seguro de eliminar el componente seleccionado?", "Confirmar", YES_NO_OPTION) == YES_OPTION){
-            try {
-                proBD.delete(tbProveedor.getValueAt(tbProveedor.getSelectedRow(), 0).toString());
-                limpiar();
-                getProveedores();
+          
+        if(tbProveedor.getSelectedRow() == -1){
+            showMessageDialog(this, "Por favor seleccione una fila", "Atención", JOptionPane.WARNING_MESSAGE);
+        }else{    try {
+                
+               proBD.delete(tbProveedor.getValueAt(tbProveedor.getSelectedRow(), 0).toString());
+               showMessageDialog(null, "Operación exitosa"); 
+               limpiar();
+               getProveedores();
             } catch (Exception ex) {
                 showMessageDialog(null, ex, "Error", ERROR_MESSAGE);
             }
@@ -147,9 +202,40 @@ public class ProveedorForm extends javax.swing.JDialog {
         
     private void getProveedores() {
         try {
-            DefaultTableModel modelo = new DefaultTableModel();
-            tbProveedor.setModel(modelo);
+            DefaultTableModel modeloPro = new DefaultTableModel();
+            tbProveedor.setModel(modeloPro);
+           
             try (ResultSet rs = proBD.datos()) {
+           
+                ResultSetMetaData rsMd = rs.getMetaData();
+                
+                int cantidadColumnas = rsMd.getColumnCount();
+                
+                for (int i = 1; i <= cantidadColumnas; i++) {
+                    modeloPro.addColumn(rsMd.getColumnLabel(i));
+                }
+
+                while (rs.next()) {
+                    Object[] fila = new Object[cantidadColumnas];
+                    for (int i = 0; i < cantidadColumnas; i++) {
+                        fila[i]=rs.getObject(i+1);
+                    }
+                    modeloPro.addRow(fila);
+                }
+            } catch (Exception ex) {
+                showMessageDialog(null,  ex, "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (HeadlessException ex) {
+            showMessageDialog(null, ex, "Error", ERROR_MESSAGE);
+        }
+    }
+    private void getProveedores2() {
+        try {
+           
+            try (ResultSet rs = proBD.datos()){
+                
+                modelo.setRowCount(0);
+           
                 ResultSetMetaData rsMd = rs.getMetaData();
                 
                 int cantidadColumnas = rsMd.getColumnCount();
@@ -166,7 +252,7 @@ public class ProveedorForm extends javax.swing.JDialog {
                     modelo.addRow(fila);
                 }
             } catch (Exception ex) {
-                showMessageDialog(null,  ex, "Error", JOptionPane.WARNING_MESSAGE);
+                showMessageDialog(null,  ex, "Error", JOptionPane.ERROR_MESSAGE);
             }
         } catch (HeadlessException ex) {
             showMessageDialog(null, ex, "Error", ERROR_MESSAGE);
@@ -200,6 +286,12 @@ public class ProveedorForm extends javax.swing.JDialog {
                 bCancelar.setEnabled(false);
                 bGuardar.setEnabled(false);
                 break;
+            case "Buscar":
+                bNuevo.setEnabled(false);
+                bBorrar.setEnabled(false);
+                bCancelar.setEnabled(true);
+                bGuardar.setEnabled(false);
+                break;
         }
     }
   private String Pa_Calcular_Dv_11_A(String p_numero, int p_basemax) {
@@ -231,7 +323,44 @@ public class ProveedorForm extends javax.swing.JDialog {
       
   return Integer.toString(v_digit);
 }
+private void buscar(){
+        limpiar();
+        establecerBotones("Buscar");
+        modoBusqueda(true);
+}
+private void modoBusqueda(boolean v){
+        if (v == true) {
+        txtCodigo.setEditable(true);
+        txtCodigo.requestFocusInWindow();
+        txtCodigo.setBackground(Color.yellow);
+        txtNombre.setEnabled(false);
+        txtApellido.setEnabled(false);
+        txtDireccion.setEnabled(false);
+        txtTelefono.setEnabled(false);
+        txtci.setEnabled(false);
+        txtdv.setEnabled(false);
+        JRci.setEnabled(false);
+        JRruc.setEnabled(false);
+        JRempresa.setEnabled(false);
+        JRparticular.setEnabled(false);
+        tbProveedor.setEnabled(false);
+        } else {
+        txtCodigo.setEditable(true);
+        txtCodigo.setBackground(Color.white);
+        txtNombre.setEnabled(true);
+        txtApellido.setEnabled(true);
+        txtDireccion.setEnabled(true);
+        txtTelefono.setEnabled(true);
+        txtci.setEnabled(true);
+        txtdv.setEnabled(true);
+        JRci.setEnabled(true);
+        JRruc.setEnabled(true);
+        JRempresa.setEnabled(true);
+        JRparticular.setEnabled(true);
         
+        }
+    }
+    
   
 
     /**
@@ -270,6 +399,7 @@ public class ProveedorForm extends javax.swing.JDialog {
         JRparticular = new javax.swing.JRadioButton();
         JRempresa = new javax.swing.JRadioButton();
         labelGuion = new javax.swing.JLabel();
+        bBuscar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Proveedores");
@@ -293,18 +423,27 @@ public class ProveedorForm extends javax.swing.JDialog {
             }
         });
         txtCodigo.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                txtCodigoKeyPressed(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtCodigoKeyTyped(evt);
             }
         });
 
         txtNombre.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNombreKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtNombreKeyTyped(evt);
             }
         });
 
         txtApellido.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtApellidoKeyReleased(evt);
+            }
             public void keyTyped(java.awt.event.KeyEvent evt) {
                 txtApellidoKeyTyped(evt);
             }
@@ -451,6 +590,18 @@ public class ProveedorForm extends javax.swing.JDialog {
 
         labelGuion.setText("-");
 
+        bBuscar.setText("Buscar");
+        bBuscar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                bBuscarMouseClicked(evt);
+            }
+        });
+        bBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                bBuscarActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -510,7 +661,8 @@ public class ProveedorForm extends javax.swing.JDialog {
                                     .addComponent(bCancelar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(bGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(bBorrar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(bNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                    .addComponent(bNuevo, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(bBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(0, 22, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
@@ -552,7 +704,9 @@ public class ProveedorForm extends javax.swing.JDialog {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(bBorrar)
-                            .addComponent(jLabel2))))
+                            .addComponent(jLabel2))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(bBuscar)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 196, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -631,28 +785,7 @@ public class ProveedorForm extends javax.swing.JDialog {
     }//GEN-LAST:event_txtCodigoActionPerformed
 
     private void bGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bGuardarActionPerformed
-        /*if ("".equals(txtCodigo.getText())) {
-            showMessageDialog(null, "Debe ingresar el codigo", "Error", JOptionPane.WARNING_MESSAGE);
-            txtCodigo.requestFocusInWindow();       
-        } else if ("".equals(txtNombre.getText())) {
-           showMessageDialog(null, "Debe ingresar el nombre", "Error", JOptionPane.WARNING_MESSAGE);
-             txtNombre.requestFocusInWindow(); 
-        } else  if  ("".equals(txtApellido.getText())) {
-           showMessageDialog(null, "Debe ingresar el apellido", "Error", JOptionPane.WARNING_MESSAGE);
-             txtApellido.requestFocusInWindow(); 
-        }*/
-        if ("".equals(txtCodigo.getText())) {
-            err.camposVacios(evt, "codigos");
-            txtCodigo.requestFocusInWindow();       
-        } else if ("".equals(txtNombre.getText())) {
-             err.camposVacios(evt, "nombre");
-             txtNombre.requestFocusInWindow(); 
-        } else  if  ("".equals(txtApellido.getText()) && JRparticular.isSelected()) {
-             err.camposVacios(evt, "apellido");
-             txtApellido.requestFocusInWindow(); 
-        }
-        
-        else { guardar();}
+           guardar();
     }//GEN-LAST:event_bGuardarActionPerformed
 
     private void bCancelarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bCancelarMouseClicked
@@ -803,9 +936,135 @@ public class ProveedorForm extends javax.swing.JDialog {
     }//GEN-LAST:event_JRempresaMouseClicked
 
     private void txtciFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtciFocusLost
-         txtdv.setText((Pa_Calcular_Dv_11_A(txtci.getText(), 11))); 
+       if (JRruc.isSelected()){
+        txtdv.setText((Pa_Calcular_Dv_11_A(txtci.getText(), 11))); }
+       else{
+        txtdv.setText("");
+       } 
+        
+       
     }//GEN-LAST:event_txtciFocusLost
 
+    private void bBuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_bBuscarMouseClicked
+       if (evt.isMetaDown()){
+            return;
+        } else {
+           buscar();
+        }
+    }//GEN-LAST:event_bBuscarMouseClicked
+
+    private void bBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bBuscarActionPerformed
+        buscar();
+    }//GEN-LAST:event_bBuscarActionPerformed
+
+    private void txtCodigoKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtCodigoKeyPressed
+       
+        if (txtNombre.isEnabled() == true){
+            return;
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if ("*".equals(txtCodigo.getText())) {
+                
+                BuscarForm bf = new BuscarForm( this, true);
+                bf.columnas = "codProveedor as \"Código\",  case when dv='' then ci else ci||'-'||dv end as \"RUC/CI\",  nombre, apellido, direccion, telefono, estado";
+                bf.tabla = "Proveedor";
+                bf.order = "proveedorId";
+                bf.filtroBusqueda = "";
+                bf.setLocationRelativeTo(this);
+                bf.setVisible(true);
+                
+                for(int c=0; c<modelo.getRowCount(); c ++){
+                    if (modelo.getValueAt(c, 0).toString().equals(bf.retorno)){
+                        modoBusqueda(false);
+                        establecerBotones("Edicion");
+                        k = c;
+                        datosActuales();
+                    return;
+                    }
+                }
+                
+            }
+            
+            for(int c=0; c<modelo.getRowCount(); c ++){
+                if (modelo.getValueAt(c, 0).toString().equals(txtCodigo.getText())){
+                    modoBusqueda(false);
+                    establecerBotones("Edicion");
+                    k = c;
+                    datosActuales();
+                    return;
+                }
+            }
+        }
+    }//GEN-LAST:event_txtCodigoKeyPressed
+
+    private void txtNombreKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNombreKeyReleased
+         String nomb = txtNombre.getText().toLowerCase();
+        int aux = 0;
+        String nombre = "";
+
+        for (int i = 0; i < nomb.length(); i++) {
+
+            char letra = nomb.charAt(i);
+
+            if (i == 0) {
+                letra = Character.toUpperCase(letra);
+            } else if (i > 0 && letra != ' ') {
+                letra = Character.toLowerCase(letra);
+            }
+
+            if (letra == ' ' || letra == '.') {
+                aux = i + 1;
+            }
+
+            if (aux == i) {
+                letra = Character.toUpperCase(letra);
+            }
+
+            nombre = nombre + letra;
+        }
+
+        txtNombre.setText(nombre);
+    }//GEN-LAST:event_txtNombreKeyReleased
+
+    private void txtApellidoKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtApellidoKeyReleased
+        String ape = txtApellido.getText().toLowerCase();
+        int aux = 0;
+        String apellido = "";
+
+        for (int i = 0; i < ape.length(); i++) {
+
+            char letra = ape.charAt(i);
+
+            if (i == 0) {
+                letra = Character.toUpperCase(letra);
+            } else if (i > 0 && letra != ' ') {
+                letra = Character.toLowerCase(letra);
+            }
+
+            if (letra == ' ' || letra == '.') {
+                aux = i + 1;
+            }
+
+            if (aux == i) {
+                letra = Character.toUpperCase(letra);
+            }
+
+            apellido = apellido + letra;
+        }
+
+        txtApellido.setText(apellido);
+    }//GEN-LAST:event_txtApellidoKeyReleased
+
+   private void datosActuales(){
+            txtCodigo.setText(modelo.getValueAt(k, 0).toString());
+            txtci.setText(modelo.getValueAt(k, 1).toString());
+            txtNombre.setText(modelo.getValueAt(k, 2).toString());
+            txtApellido.setText(modelo.getValueAt(k, 3).toString());
+            txtDireccion.setText(modelo.getValueAt(k, 4).toString());
+            txtTelefono.setText(modelo.getValueAt(k, 5).toString());
+            CBestado.setSelectedItem(modelo.getValueAt(k, 6).toString());
+        
+    }
     /**
      * @param args the command line arguments
      */
@@ -836,7 +1095,7 @@ public class ProveedorForm extends javax.swing.JDialog {
         /* Create and display the dialog */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                ProveedorForm dialog = new ProveedorForm(new javax.swing.JFrame(), true);
+                ProveedorForm dialog = new ProveedorForm(new javax.swing.JDialog(), true);
                 dialog.addWindowListener(new java.awt.event.WindowAdapter() {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent e) {
@@ -859,6 +1118,7 @@ public class ProveedorForm extends javax.swing.JDialog {
     private javax.swing.JRadioButton JRruc;
     private javax.swing.JLabel LabelApellido;
     private javax.swing.JButton bBorrar;
+    private javax.swing.JButton bBuscar;
     private javax.swing.JButton bCancelar;
     private javax.swing.JButton bGuardar;
     private javax.swing.JButton bNuevo;

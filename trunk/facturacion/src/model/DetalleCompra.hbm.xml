@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.DetalleCompra" schema="public" table="detalle_compra">
+    <id name="detalleCompraId" type="int">
+      <column name="detalle_compra_id"/>
+      <generator class="assigned"/>
+    </id>
+    <many-to-one class="model.Componente" fetch="select" name="componente">
+      <column name="componente_id" not-null="true"/>
+    </many-to-one>
+    <many-to-one class="model.Compra" fetch="select" name="compra">
+      <column name="compra_id" not-null="true"/>
+    </many-to-one>
+    <property name="cantidad" type="int">
+      <column name="cantidad" not-null="true"/>
+    </property>
+    <property name="subTotal" type="double">
+      <column name="sub_total" not-null="true" precision="17" scale="17"/>
+    </property>
+    <property name="descripcion" type="string">
+      <column length="20" name="descripcion"/>
+    </property>
+    <property name="codigo" type="string">
+      <column length="15" name="codigo" not-null="true"/>
+    </property>
+    <property name="precioExcenta" type="double">
+      <column name="precio_excenta" not-null="true" precision="17" scale="17"/>
+    </property>
+  </class>
+</hibernate-mapping>

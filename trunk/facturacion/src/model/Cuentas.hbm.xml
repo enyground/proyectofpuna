@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.Cuentas" schema="public" table="cuentas">
+    <id name="cuentaId" type="int">
+      <column name="cuenta_id"/>
+      <generator class="assigned"/>
+    </id>
+    <many-to-one class="model.Cliente" fetch="select" name="cliente">
+      <column name="cliente_id"/>
+    </many-to-one>
+    <many-to-one class="model.Proveedor" fetch="select" name="proveedor">
+      <column name="proveedor_id"/>
+    </many-to-one>
+    <property name="saldo" type="double">
+      <column name="saldo" not-null="true" precision="17" scale="17"/>
+    </property>
+    <property name="estado" type="string">
+      <column length="10" name="estado" not-null="true"/>
+    </property>
+    <property name="pagoEn" type="java.lang.Short">
+      <column name="pago_en"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="true" name="pagoFacturas" table="pago_factura">
+      <key>
+        <column name="cuenta_id" not-null="true"/>
+      </key>
+      <one-to-many class="model.PagoFactura"/>
+    </set>
+  </class>
+</hibernate-mapping>

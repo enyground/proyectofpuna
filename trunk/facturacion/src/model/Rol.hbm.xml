@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.Rol" schema="public" table="rol">
+    <id name="rolId" type="int">
+      <column name="rol_id"/>
+      <generator class="identity"/>
+    </id>
+    <property name="nombre" type="string">
+      <column length="15" name="nombre"/>
+    </property>
+    <property name="descripcion" type="string">
+      <column length="30" name="descripcion"/>
+    </property>
+    <set fetch="select" inverse="false" lazy="true" name="usuarios" table="rol_usuario">
+      <key>
+        <column name="id_rol" not-null="true"/>
+      </key>
+      <many-to-many entity-name="model.Usuario">
+        <column name="id_usuario" not-null="true"/>
+      </many-to-many>
+    </set>
+    <set fetch="select" inverse="false" cascade="all" lazy="true" name="permisoses" table="rol_permisos">
+      <key>
+        <column name="id_rol" not-null="true"/>
+      </key>
+      <many-to-many entity-name="model.Permisos">
+        <column name="id_permisos" not-null="true"/>
+      </many-to-many>
+    </set>
+  </class>
+</hibernate-mapping>

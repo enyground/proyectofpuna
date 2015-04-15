@@ -1,36 +1,53 @@
-<?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<!-- Generated Mar 17, 2015 6:25:46 PM by Hibernate Tools 3.6.0 -->
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
 <hibernate-mapping>
-    <class name="model.Proveedor" table="proveedor" schema="public">
-        <id name="proveedorId" type="int">
-            <column name="proveedor_id" />
-            <generator class="identity" />
-        </id>
-        <property name="nombre" type="string">
-            <column name="nombre" length="15" />
-        </property>
-        <property name="apellido" type="string">
-            <column name="apellido" length="15" />
-        </property>
-        <property name="direccion" type="string">
-            <column name="direccion" length="20" />
-        </property>
-        <property name="telefono" type="string">
-            <column name="telefono" length="15" />
-        </property>
-        <property name="ci" type="string">
-            <column name="ci" length="8" />
-        </property>
-        <property name="codProveedor" type="string">
-            <column name="cod_proveedor" length="10" />
-        </property>
-        <property name="dv" type="string">
-            <column name="dv" length="1" />
-        </property>
-        <property name="estado" type="string">
-            <column name="estado" length="10" />
-        </property>
-    </class>
+  <class name="model.Proveedor" schema="public" table="proveedor">
+    <id name="proveedorId" type="int">
+      <column name="proveedor_id"/>
+      <generator class="assigned"/>
+    </id>
+    <property name="nombre" type="string">
+      <column length="15" name="nombre"/>
+    </property>
+    <property name="apellido" type="string">
+      <column length="15" name="apellido"/>
+    </property>
+    <property name="direccion" type="string">
+      <column length="20" name="direccion"/>
+    </property>
+    <property name="telefono" type="string">
+      <column length="15" name="telefono"/>
+    </property>
+    <property name="ci" type="string">
+      <column length="8" name="ci"/>
+    </property>
+    <property name="codProveedor" type="string">
+      <column length="10" name="cod_proveedor" unique="true"/>
+    </property>
+    <property name="dv" type="string">
+      <column length="1" name="dv"/>
+    </property>
+    <property name="estado" type="string">
+      <column length="10" name="estado"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="true" name="compras" table="compra">
+      <key>
+        <column name="proveedor_id" not-null="true"/>
+      </key>
+      <one-to-many class="model.Compra"/>
+    </set>
+    <set fetch="select" inverse="true" lazy="true" name="notaRemisions" table="nota_remision">
+      <key>
+        <column name="proveedor_id" not-null="true"/>
+      </key>
+      <one-to-many class="model.NotaRemision"/>
+    </set>
+    <set fetch="select" inverse="true" lazy="true" name="cuentases" table="cuentas">
+      <key>
+        <column name="proveedor_id"/>
+      </key>
+      <one-to-many class="model.Cuentas"/>
+    </set>
+  </class>
 </hibernate-mapping>

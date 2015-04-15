@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated Apr 14, 2015 8:31:58 PM by Hibernate Tools 3.6.0 -->
+<hibernate-mapping>
+  <class name="model.NotaRemision" schema="public" table="nota_remision">
+    <id name="remisionId" type="int">
+      <column name="remision_id"/>
+      <generator class="assigned"/>
+    </id>
+    <many-to-one class="model.Proveedor" fetch="select" name="proveedor">
+      <column name="proveedor_id" not-null="true"/>
+    </many-to-one>
+    <property name="nroRemito" type="int">
+      <column name="nro_remito" not-null="true"/>
+    </property>
+    <property name="nroPrefijo" type="int">
+      <column name="nro_prefijo" not-null="true"/>
+    </property>
+    <property name="codProyecto" type="string">
+      <column length="10" name="cod_proyecto" not-null="true"/>
+    </property>
+    <property name="estado" type="string">
+      <column length="10" name="estado" not-null="true"/>
+    </property>
+    <property name="razonSocial" type="string">
+      <column length="20" name="razon_social" not-null="true"/>
+    </property>
+    <property name="rucCi" type="string">
+      <column length="15" name="ruc_ci" not-null="true"/>
+    </property>
+    <property name="puntoPartida" type="string">
+      <column length="30" name="punto_partida" not-null="true"/>
+    </property>
+    <property name="puntoLlegada" type="string">
+      <column length="30" name="punto_llegada" not-null="true"/>
+    </property>
+    <property name="fechaInicio" type="timestamp">
+      <column length="29" name="fecha_inicio" not-null="true"/>
+    </property>
+    <property name="fechaFin" type="timestamp">
+      <column length="29" name="fecha_fin" not-null="true"/>
+    </property>
+    <set fetch="select" inverse="true" lazy="true" name="detalleRemisions" table="detalle_remision">
+      <key>
+        <column name="remision_id" not-null="true"/>
+      </key>
+      <one-to-many class="model.DetalleRemision"/>
+    </set>
+  </class>
+</hibernate-mapping>

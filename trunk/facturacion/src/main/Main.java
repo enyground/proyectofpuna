@@ -6,9 +6,10 @@
 
 package main;
 
-import vista.Estados;
+//import vista.CrearRol;
 import vista.ProveedorForm;
-import vista.ruc;
+import vista.medioPagoForm;
+
 
 /**
  *
@@ -20,6 +21,7 @@ public class Main {
      */
     public static void main(String[] args) {
        ProveedorForm c = new ProveedorForm();
+      // medioPagoForm c = new medioPagoForm(); 
        c.pack();
        c.setVisible(true);
        c.setLocationRelativeTo(null);
